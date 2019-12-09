@@ -1,0 +1,12 @@
+
+on: [push]
+name: "在 github-action 显示 token"
+
+jobs:
+  job_01:
+    runs-on: ubuntu-latest
+    name: "打印环境变量 token"
+    steps:
+        
+      - name: "直接打印 token "
+        run: echo ${{ secrets.GITHUB_TOKEN }}

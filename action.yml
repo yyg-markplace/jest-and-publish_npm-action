@@ -1,0 +1,14 @@
+# 这个 name 字段是发布到 marketplace 中, 不是现实在界面的侧边栏 , 要注意
+name: "yy-group-jest-and-publish_npm-action"
+# 注意 在调用市场的 action 中,实际上是需要的是 仓库地址,而不是这里的名称
+# 这是一个action 的元数据 , 只有输出和输入字段
+description: "git-clone 并 jest 最后 publish_npm_to_github"
+branding:
+  icon: "award"
+  color: "red"
+# 不需要输入输出, 
+runs:
+  using: "node12"
+  main: "index.js"
+  # 注意 xx.js 还没有经过 ncc 打包
+  #post: "dist/xx.js"
