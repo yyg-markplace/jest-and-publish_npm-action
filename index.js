@@ -63,7 +63,7 @@ p_generate_package.on('exit', (code) => {
     result_p_generate_package = code
 })
 
-let p_run_jest
+//let p_run_jest
 
 let time = setInterval(function(){
     if(!(result_p_install_jest + result_p_git_clone + result_p_generate_package + timeout_status)){
@@ -74,7 +74,7 @@ let time = setInterval(function(){
         //卫生这里还是使用 多进程 , 不是使用异步
         //还是使用异步的好
         //运行 jest 命令
-        p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
+        let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
         p_run_jest.on('exit', (code) => {
             //result_p_generate_package = code
             run_jest_output_result ()
