@@ -19,7 +19,7 @@ let git_clone_command = "git clone " + context.payload.repository.git_url
 let p_git_clone = childProcess.exec(git_clone_command )
 
 //jest 命令需要package.json 文件 ,  临时安装一下 
-
+// 注意: 对于 json 格式需要 python 工具格式化 , 不然 echo 总是错误
 let  package_contain = `echo '{"scripts":{"test":"jest"}}'|python -m json.tool > package.json`
 
 let p_generate_package = childProcess.exec(package_contain)
@@ -31,9 +31,9 @@ let p_generate_package = childProcess.exec(package_contain)
 
 let run_jest_output_result = async function(){
 
-    await exec.exec('cat', [ 'package.json']);
+    //await exec.exec('cat', [ 'package.json']);
 
-    await exec.exec('jest', [ '--json','--outputFile' , 'jest-result.json']);
+    await exec.exec('jest', [ '--json','--outputFile' , 'jest-result.json'],{});
     console.log("jest测试结束 , 并将结果输出在jest-result.json文件中")
     
     console.log("读取 json 文件,查看 jest 测试结果")
