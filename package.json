@@ -1,25 +1,5 @@
 {
-  "name": "jest-and-publish_npm-action",
-  "version": "1.0.0",
-  "description": "一个公布在macketplace 上的action , 拉取宿主仓库 ,使用 jest测试宿主代码,测试成功后,将这段代码发布到对应的 npm私有仓库",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "dependencies": {},
-  "devDependencies": {},
   "scripts": {
     "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yy-group-invoke-js-action/jest-and-publish_npm-action.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/yy-group-invoke-js-action/jest-and-publish_npm-action/issues"
-  },
-  "homepage": "https://github.com/yy-group-invoke-js-action/jest-and-publish_npm-action#readme"
+  }
 }
