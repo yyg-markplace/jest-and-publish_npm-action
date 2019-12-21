@@ -20,9 +20,9 @@ let p_git_clone = childProcess.exec(git_clone_command )
 
 //jest 命令需要package.json 文件 ,  临时安装一下 
 
-//let  package_contain = "echo '{"scripts":{"test":"jest"}}'|python -m json.tool > package.json"
+let  package_contain = `echo '{"scripts":{"test":"jest"}}'|python -m json.tool > package.json`
 
-let p_generate_package = childProcess.exec("echo" , [package_contain , " > " , "package.json"])
+let p_generate_package = childProcess.exec(package_contain)
 
 //运行 jest 命令
 //let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
