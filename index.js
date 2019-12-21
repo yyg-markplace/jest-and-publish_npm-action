@@ -18,7 +18,7 @@ let git_clone_command = "git clone " + context.payload.repository.git_url
 let p_git_clone = childProcess.exec(git_clone_command )
 
 //jest 命令需要package.json 文件 ,  临时安装一下
-let  package_contain = `echo {"scripts": {"test": "jest"}}`
+let  package_contain = `echo {"scripts": {"test": "jest"}} > package.json`
 let p_generate_package = childProcess.exec(package_contain)
 
 //运行 jest 命令
@@ -45,6 +45,7 @@ let time = setInterval(function(){
     if(!result_p_generate_package){
         exec.exec('ls');
         clearInterval(time)
+        exec.exec("cat package.json");
     }
 } , 300)
 /*
