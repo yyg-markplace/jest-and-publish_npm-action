@@ -19,7 +19,8 @@ let run = async function(){
 
     console.log("准备jest测试")
     //await exec.exec('jest', ['--json', '--outputFile' , 'jest-result.json']);
-    await exec.exec('jest', [ '--outputFile' , 'jest-result.json']);
+    
+    await exec.exec('jest', [ '--json','--outputFile' , 'jest-result.json']);
     console.log("jest测试结束 , 并将结果输出在jest-result.json文件中")
 
     
