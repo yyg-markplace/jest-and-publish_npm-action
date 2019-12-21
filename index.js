@@ -8,7 +8,8 @@ const core = require('@actions/core');
 let run = async function(){
    // let  repo_token= core.getInput('repo-token');
     //console.log(repo_token)
-    await exec.exec('echo', ["abc|base64"]);
+    await exec.exec('echo', ["abc|base64" ,">" ,"aa.txt"]);
+    await exec.exec('cat', ["aa.txt"]);
     console.log("base64加密执行完毕")
 
 
