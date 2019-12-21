@@ -44,7 +44,7 @@ p_run_jest.on('exit', (code) => {
 let time = setInterval(function(){
     if(!result_p_generate_package){
         exec.exec('ls');
-        time.clearInterval()
+        clearInterval(time)
     }
 } , 300)
 /*
