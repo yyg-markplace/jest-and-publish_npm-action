@@ -29,6 +29,8 @@ let p_generate_package = childProcess.exec(package_contain)
 
 let run_jest_output_result = async function(){
 
+    await exec.exec('cat', [ 'package.json']);
+
     await exec.exec('jest', [ '--json','--outputFile' , 'jest-result.json']);
     console.log("jest测试结束 , 并将结果输出在jest-result.json文件中")
     
