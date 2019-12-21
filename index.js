@@ -6,7 +6,7 @@ const childProcess = require('child_process')
 
 
 
-let p_install_jest = childProcess.exec("sudo npm install -g jest" )
+let p_install_jest = childProcess.exec("sudo npm install -g jest00" )
 p_install_jest.on('exit', (code) => {
     console.log(`退出码: ${code}`);
 })
