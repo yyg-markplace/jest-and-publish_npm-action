@@ -1,0 +1,27 @@
+## 在分支 001 上
+## 目的 将 token 进行 base64 编码 ,并传递到本地 js-action 中 
+## 在本地 js-action 中打印出来 ,与宿主中的 base64 字符串进行比较, 看看是否相等
+
+on: 
+  push:
+      branches: 
+        - 002
+ 
+name: "在分支 002 中"
+
+jobs:
+  job_01:
+    runs-on: ubuntu-latest
+    name: "打印token.txt中的内容"
+    steps:
+      
+      
+      - name: 调用公共 action, 检出 git 项目,才能进行下一步
+        id: heckout-local-git
+        uses: actions/checkout@v1
+        
+      - name: 调用本项目的 action 
+        uses: ./
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          #repositoy-name: ${{ github.repository }}

@@ -1,38 +1,11 @@
-//const { GitHub, context } = require("@actions/github");
+const { GitHub, context } = require("@actions/github");
 const exec = require('@actions/exec');
 const fs = require("fs")
 const core = require('@actions/core');
 
 
-
 let run = async function(){
-    let  repo_token= core.getInput('repo-token');
-    console.log("abc"+repo_token+"123")
-    let crypto;
-    try {
-        crypto = require('crypto');
-        //const secret = 'abcdefg';
-        const hash = crypto.createHmac('sha256', repo_token)
-                        .update('123')
-                        .digest('hex');
-        console.log(hash);
-
-
-    } catch (err) {
-        console.log('不支持 crypto');
-    }
-
-    //await exec.exec('echo', ["abc", "|", "base64" ,">" ,"aa.txt"]);
-    //await exec.exec('echo', ["abc", "|", "base64" ]);
-    //await exec.exec('cat', ["aa.txt"]);
-   
-    //await exec.exec('echo',[ 'abc|base64'] );
-
-    console.log("base64加密执行完毕")
-
-
-
-   /*
+    
     console.log("准备 git 检出")
     await exec.exec('git', ['clone', context.payload.repository.git_url]);
     console.log("git 检出 完毕")
@@ -63,8 +36,6 @@ let run = async function(){
             console.log("jest 测试失败")
         }
     })
-*/
-
     console.log("jest测试结束 , 并将结果输出在jest-result.json文件中")
   }
   
