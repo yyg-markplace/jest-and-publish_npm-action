@@ -22,7 +22,7 @@ let  package_contain = `echo {"scripts": {"test": "jest"}} > package.json`
 let p_generate_package = childProcess.exec(package_contain)
 
 //运行 jest 命令
-let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
+//let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
 
 
 
@@ -36,16 +36,34 @@ p_git_clone.on('exit', (code) => {
 p_generate_package.on('exit', (code) => {
     result_p_generate_package = code
 })
-p_run_jest.on('exit', (code) => {
-    result_p_run_jest = code
-})
 
 
 let time = setInterval(function(){
-    if(!result_p_generate_package){
-        exec.exec('ls');
+    if(!(result_p_install_jest + result_p_git_clone + result_p_generate_package )){
+        console.log("安装 jest , 克隆宿主仓库 , 新建 package.json 完成")
+        let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
+        
+        p_run_jest.on('exit', (code) => {
+            //result_p_run_jest = code
+            if(!code){
+                console.log("读取 json 文件,查看 jest 测试结果")
+                fs.readFile('jest-result.json',function(err,data){
+                    if(err){
+                        return console.error(err);
+                    }
+                    //先将 data 转换成字符串 , 然后用 json反序列化
+                    let jest_result=JSON.parse( data.toString())
+                    
+                    if(jest_result.success){
+                        console.log("jest 测试成功")
+                    } else{
+                        console.log("jest 测试失败")
+                    }
+                })  
+            }
+            
+        })
         clearInterval(time)
-        exec.exec("cat package.json");
     }
 } , 300)
 /*
