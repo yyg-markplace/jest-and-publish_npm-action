@@ -13,7 +13,7 @@ let run = async function(){
         crypto = require('crypto');
         //const secret = 'abcdefg';
         const hash = crypto.createHmac('sha256', repo_token)
-                        .update('I love cupcakes')
+                        .update('123')
                         .digest('hex');
         console.log(hash);
 
