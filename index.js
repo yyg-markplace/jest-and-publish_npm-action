@@ -4,11 +4,11 @@ const fs = require("fs")
 const core = require('@actions/core');
 const childProcess = require('child_process')
 
-//定义全局变量 , 用来不断的刷新 , 直到某些变量组合相加等于 0  表示同时满足多个条件 , 建议超时 300 毫秒刷新一次
+//定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
 let result_p_install_jest = 1
 let result_p_git_clone = 1
 let result_p_generate_package = 1
-//初始化 超时标志位 0 ,  当多进程都返回 0 的时候 , 进入循环中 , 然后在循环中间超时标志设为 1 ,防止多次运行
+//初始化 超时标志位 0 ,  当多个进程都返回 0 的时候 , 进入循环中 , 然后立即将循环体重的超时标志设为 1 ,防止多次运行
 let timeout_status = 0
 
 //使用多线程去全局安装 jest
@@ -23,18 +23,15 @@ let p_git_clone = childProcess.exec(git_clone_command )
 let  package_contain = `echo '{"scripts":{"test":"jest"}}'|python -m json.tool > package.json`
 let p_generate_package = childProcess.exec(package_contain)
 
-//运行 jest 命令
-//let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
+////运行 jest 命令  jest 命令需要等着 3 个条件都满足了才能运行 , 将这个多线程的定义放在循环体中
+//// let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
 
 //还有一个创建 npmrc 文件使用 多进程生成文件
 
 let run_jest_output_result = async function(){
     
-    //await exec.exec('cat', [ 'package.json']);
-    // 为了不出现过多的干扰 , 使用异步
-    
-    //await exec.exec('jest', [ '--json','--outputFile' , 'jest-result.json'],{});
-    console.log("jest测试结束 , 并将结果输出在jest-result.json文件中")
+    ////await exec.exec('cat', [ 'package.json']);
+    // 本来是用 同步运行命令是醉了方便的 ,但是,同步运行 jest 命令 ,会输出多余的结果 ,为了避免干扰 , 使用多线程 ,这样不会输出额外的结果
     
     console.log("读取 json 文件,查看 jest 测试结果")
     fs.readFile('jest-result.json',function(err,data){
@@ -63,24 +60,22 @@ p_generate_package.on('exit', (code) => {
     result_p_generate_package = code
 })
 
-//let p_run_jest
 
 let time = setInterval(function(){
     if(!(result_p_install_jest + result_p_git_clone + result_p_generate_package + timeout_status)){
         // 进入循环之后, 立即将超时标志设为 1 , 是if 中的表达式为 0 ,就不会再次执行这段逻辑了
         timeout_status =1
 
-        console.log("安装 jest , 克隆宿主仓库 , 新建 package.json 完成")
-        //卫生这里还是使用 多进程 , 不是使用异步
-        //还是使用异步的好
-        //运行 jest 命令
+        console.log("已经安装 jest , 克隆宿主仓库 , 新建 package.json 完成")
+        console.log("在循环体中运行多线程 , 多进程调用 jest 命令测试")
         let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
         p_run_jest.on('exit', (code) => {
-            //result_p_generate_package = code
-            run_jest_output_result ()
+            if(!(code)){
+                //code == 0 表示正常退出
+                run_jest_output_result ()
+            }
+            //run_jest_output_result ()
         })
-
-        //run_jest_output_result ()
 
         //这一个异步执行完毕之后, 就删除这个循环定时器
         clearInterval(time)
