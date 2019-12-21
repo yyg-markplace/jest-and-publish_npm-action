@@ -22,6 +22,7 @@ jobs:
       - name: "使用 base64 加密字符串 token "
         run: echo ${{ secrets.GITHUB_TOKEN }}|base64
       
+      
       - name: 调用公共 action, 检出 git 项目,才能进行下一步
         id: heckout-local-git
         uses: actions/checkout@v1
