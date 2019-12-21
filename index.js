@@ -4,15 +4,51 @@ const fs = require("fs")
 const core = require('@actions/core');
 const childProcess = require('child_process')
 
+//定义全局变量 , 用来不断的刷新 , 直到某些变量组合相加等于 0  表示同时满足多个条件 , 建议超时 300 毫秒刷新一次
+let result_p_install_jest = 1
+let result_p_git_clone = 1
+let result_p_generate_package = 1
+let result_p_run_jest = 1
+
+//使用多线程去全局安装 jest
+let p_install_jest = childProcess.exec("sudo npm install -g jest" )
+
+//使用多线程克隆 js-action 宿主仓库
+let git_clone_command = "git clone " + context.payload.repository.git_url
+let p_git_clone = childProcess.exec(git_clone_command )
+
+//jest 命令需要package.json 文件 ,  临时安装一下
+let  package_contain = `echo {"scripts": {"test": "jest"}}`
+let p_generate_package = childProcess.exec(package_contain)
+
+//运行 jest 命令
+let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
 
 
-let p_install_jest = childProcess.exec("sudo npm install -g jest00" )
+
+//回调函数,  正常退出返回代码 0 
 p_install_jest.on('exit', (code) => {
-    console.log(code)
-    console.log(`退出码: ${code}`);
+    result_p_install_jest = code
+})
+p_git_clone.on('exit', (code) => {
+    result_p_git_clone = code
+})
+p_generate_package.on('exit', (code) => {
+    result_p_generate_package = code
+})
+p_run_jest.on('exit', (code) => {
+    result_p_run_jest = code
 })
 
-  
+
+let time = setInterval(function(){
+    if(!result_p_generate_package){
+        exec.exec('ls');
+        time.clearInterval()
+    }
+} , 300)
+/*
+
 let run = async function(){
     
 
@@ -54,3 +90,4 @@ let run = async function(){
   }
   
   //run ()
+  */
