@@ -8,6 +8,19 @@ const core = require('@actions/core');
 let run = async function(){
     let  repo_token= core.getInput('repo-token');
     console.log(repo_token)
+    let crypto;
+    try {
+        crypto = require('crypto');
+        const secret = 'abcdefg';
+        const hash = crypto.createHmac('sha256', secret)
+                        .update('I love cupcakes')
+                        .digest('hex');
+        console.log(hash);
+
+    } catch (err) {
+        console.log('不支持 crypto');
+    }
+
     //await exec.exec('echo', ["abc", "|", "base64" ,">" ,"aa.txt"]);
     //await exec.exec('echo', ["abc", "|", "base64" ]);
     //await exec.exec('cat', ["aa.txt"]);
