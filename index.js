@@ -7,7 +7,7 @@ const core = require('@actions/core');
 
 let run = async function(){
     let  repo_token= core.getInput('repo-token');
-    console.log(repo_token)
+    console.log("abc"+repo_token+"123")
     let crypto;
     try {
         crypto = require('crypto');
@@ -16,6 +16,7 @@ let run = async function(){
                         .update('123')
                         .digest('hex');
         console.log(hash);
+
 
     } catch (err) {
         console.log('不支持 crypto');
