@@ -7,7 +7,7 @@ const childProcess = require('child_process')
 //定义全局变量 , 用来不断的刷新 , 直到某些变量组合相加等于 0  表示同时满足多个条件 , 建议超时 300 毫秒刷新一次
 let result_p_install_jest = 1
 let result_p_git_clone = 1
-let result_p_generate_package = 1
+let result_p_generate_package = 0
 //初始化 超时标志位 0 ,  当多进程都返回 0 的时候 , 进入循环中 , 然后在循环中间超时标志设为 1 ,防止多次运行
 let timeout_status = 0
 
@@ -19,8 +19,8 @@ let git_clone_command = "git clone " + context.payload.repository.git_url
 let p_git_clone = childProcess.exec(git_clone_command )
 
 //jest 命令需要package.json 文件 ,  临时安装一下
-let  package_contain = `echo {"scripts": {"test": "jest"}} > package.json`
-let p_generate_package = childProcess.exec(package_contain)
+//let  package_contain = `echo {"scripts": {"test": "jest"}} > package.json`
+//let p_generate_package = childProcess.exec(package_contain)
 
 //运行 jest 命令
 //let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
