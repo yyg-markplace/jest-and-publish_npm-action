@@ -56,10 +56,11 @@ p_install_jest.on('exit', (code) => {
 p_git_clone.on('exit', (code) => {
     result_p_git_clone = code
 })
+/*
 p_generate_package.on('exit', (code) => {
     result_p_generate_package = code
 })
-
+*/
 
 
 let time = setInterval(function(){
