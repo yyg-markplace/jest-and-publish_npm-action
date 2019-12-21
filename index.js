@@ -14,7 +14,7 @@ let run = async function(){
     await exec.exec('ls');
 
     console.log("准备全局安装 jest")
-    await exec.exec('npm', ['i', '-g' , 'jest']);
+    await exec.exec('npm', ['install', '-g' , 'jest']);
     console.log("jest安装完毕")
 
     console.log("准备jest测试")
