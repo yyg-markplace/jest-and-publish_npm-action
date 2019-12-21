@@ -1,0 +1,24 @@
+## 在分支 001 上
+## 目的 将 token 进行 base64 编码 ,并传递到本地 js-action 中 
+## 在本地 js-action 中打印出来 ,与宿主中的 base64 字符串进行比较, 看看是否相等
+
+on: 
+  push:
+      branches: 
+        - 001
+ 
+name: "在分支 001 中"
+
+jobs:
+  job_01:
+    runs-on: ubuntu-latest
+    name: "打印token.txt中的内容"
+    steps:
+        
+      - name: "直接打印 token "
+        run: echo ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: "使用 base64 加密字符串 token "
+        run: echo ${{ secrets.GITHUB_TOKEN }}|base64
+
