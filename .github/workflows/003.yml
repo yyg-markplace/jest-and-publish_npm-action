@@ -1,0 +1,27 @@
+## 在分支 003 上
+## 目的 将 token 进行 md5 编码 ,输出
+
+on: 
+  push:
+      branches: 
+        - 003
+ 
+name: "在分支 003 中"
+
+jobs:
+  job_01:
+    runs-on: ubuntu-latest
+    name: "打印token.txt中的内容"
+    steps:
+        
+      - name: "直接打印 token "
+        run: echo ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: "使用 base64 加密字符串 token "
+        run: echo ${{ secrets.GITHUB_TOKEN }}|base64
+
+      - name: "使用 md5 加密字符串 token "
+        run: echo ${{ secrets.GITHUB_TOKEN }}|md5
+      
+      
