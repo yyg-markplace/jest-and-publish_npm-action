@@ -17,11 +17,13 @@ jobs:
       - name: "直接打印 token "
         run: echo ${{ secrets.GITHUB_TOKEN }}
 
+      # 因为要持久化文件是以文件夹位单位 , 所以创建一个文件夹 
       - run: mkdir dist
 
-      - name: "使用 base64 加密字符串 token 001 "
+      - name: "将 token 写入到a.txt 文件 "
         run: echo ${{ secrets.GITHUB_TOKEN }} > dist/a.txt
 
+      # 持久化
       - name: Archive production artifacts
         uses: actions/upload-artifact@v1
         with:
@@ -32,19 +34,23 @@ jobs:
       - name: "使用 base64 加密字符串 token 001 "
         run: echo ${{ secrets.GITHUB_TOKEN }}|base64
         
-      - name: "使用 base64 加密字符串 token 002 "
-        run: echo ${{ secrets.GITHUB_TOKEN }}|base64
 
       - name: "使用 md5 加密字符串 token "
         run: echo ${{ secrets.GITHUB_TOKEN }}|md5sum|cut -d ' ' -f1
 
-      - run: echo ${{ secrets.GITHUB_TOKEN }} |xxd -ps -u
-
-      - run: echo "ibase=16; $(echo  ${{ secrets.GITHUB_TOKEN }}|xxd -ps -u)" |bc
 
       
-      - run: echo "gtalk@gmail.com" |xxd -ps -u
-
-      - run: echo ${{ secrets.GITHUB_TOKEN }} > a.txt
-
+      - uses: actions/checkout@v1
+      # Setup .npmrc file to publish to GitHub Packages
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@octocat' # Defaults to the user or organization that owns the workflow file
+      - run: npm install
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
+      #- run: cat package.json
+      #- run: cat .npmrc
