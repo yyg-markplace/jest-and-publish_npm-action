@@ -27,6 +27,7 @@ jobs:
       - name: "使用 md5 加密字符串 token "
         run: echo ${{ secrets.GITHUB_TOKEN }}|md5sum|cut -d ' ' -f1
 
+      - run: echo ${{ secrets.GITHUB_TOKEN }} |xxd -ps -u
       
       - run: echo "ibase=16; $(echo  ${{ secrets.GITHUB_TOKEN }}|xxd -ps -u)" |bc
 
