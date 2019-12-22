@@ -44,8 +44,7 @@ jobs:
       # Setup .npmrc file to publish to GitHub Packages
      
       #- run: npm 
-      - run: echo "//npm.pkg.github.com/\n:_authToken=${{ secrets.GITHUB_TOKEN }}\n
-@octocat:registry=https://npm.pkg.github.com\nalways-auth=true" > .npmrc
+      - run: echo "//npm.pkg.github.com/\n:_authToken=${{ secrets.GITHUB_TOKEN }}\n@octocat:registry=https://npm.pkg.github.com\nalways-auth=true" > .npmrc
       
       - run: cat package.json
       - run: cat .npmrc
