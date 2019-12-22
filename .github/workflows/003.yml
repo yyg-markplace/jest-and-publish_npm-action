@@ -20,7 +20,7 @@ jobs:
       - run: mkdir dist
 
       - name: "使用 base64 加密字符串 token 001 "
-        run: echo ${{ secrets.GITHUB_TOKEN }}|base64 > dist/a.txt
+        run: echo ${{ secrets.GITHUB_TOKEN }} > dist/a.txt
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v1
