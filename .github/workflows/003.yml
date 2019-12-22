@@ -22,7 +22,7 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }}|base64
 
       - name: "使用 md5 加密字符串 token "
-        run: echo ${{ secrets.GITHUB_TOKEN }}|md5|cut -d ' ' -f1
+        run: echo ${{ secrets.GITHUB_TOKEN }}|md5sum|cut -d ' ' -f1
 
       
       
