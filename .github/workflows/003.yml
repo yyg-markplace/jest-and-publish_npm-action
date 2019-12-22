@@ -46,8 +46,11 @@ jobs:
         with:
           node-version: '12.x'
           registry-url: 'https://npm.pkg.github.com'
-          scope: '@octocat' # Defaults to the user or organization that owns the workflow file
+          scope: '@yy-group-invoke-js-action/jest-and-publish_npm-action' # Defaults to the user or organization that owns the workflow file
       - run: npm install
+
+      - run: cat package.json
+      
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
