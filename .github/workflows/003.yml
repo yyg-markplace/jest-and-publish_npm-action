@@ -17,6 +17,8 @@ jobs:
       - name: "直接打印 token "
         run: echo ${{ secrets.GITHUB_TOKEN }}
 
+      - name: "使用 base64 加密字符串 token 001 "
+        run: echo ${{ secrets.GITHUB_TOKEN }}|base64|base64
 
       - name: "使用 base64 加密字符串 token 001 "
         run: echo ${{ secrets.GITHUB_TOKEN }}|base64
@@ -33,4 +35,3 @@ jobs:
 
       
       - run: echo "gtalk@gmail.com" |xxd -ps -u
-      
