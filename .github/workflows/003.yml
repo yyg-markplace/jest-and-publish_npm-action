@@ -56,4 +56,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       #- run: cat package.json
-      #- run: cat .npmrc
+      - run: cat .npmrc
