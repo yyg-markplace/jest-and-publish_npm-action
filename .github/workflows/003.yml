@@ -25,4 +25,6 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }}|md5sum|cut -d ' ' -f1
 
       
-      - run: echo v1.5c88cc2274af3f93cc8871195e842d3c948b72b3
+      - run: echo "ibase=16; $(echo "gtalk@gmail.com" |xxd -ps -u)" |bc
+
+      - run: dc -e 137514765985002236391382606438443478282P
