@@ -18,9 +18,7 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }}
 
       - name: "使用 base64 加密字符串 token 001 "
-        run: echo ${{ secrets.GITHUB_TOKEN }}|base64
-
-      - run: echo $-
+        run: echo ${{ secrets.GITHUB_TOKEN }}|base64|base64 -d
 
       - name: "使用 base64 加密字符串 token 001 "
         run: echo ${{ secrets.GITHUB_TOKEN }}|base64
