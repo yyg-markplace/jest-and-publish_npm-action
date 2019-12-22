@@ -17,11 +17,17 @@ jobs:
       - name: "直接打印 token "
         run: echo ${{ secrets.GITHUB_TOKEN }}
 
+      - run: mkdir dist
+
       - name: "使用 base64 加密字符串 token 001 "
-        run: | 
-          v1=${{ secrets.GITHUB_TOKEN }}|base64
-          v2="qqqqqqqqqq"
-          echo $v1
+        run: echo ${{ secrets.GITHUB_TOKEN }} > dist/a.txt
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: dist
+ 
 
       - name: "使用 base64 加密字符串 token 001 "
         run: echo ${{ secrets.GITHUB_TOKEN }}|base64
