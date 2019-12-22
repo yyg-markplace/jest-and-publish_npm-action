@@ -43,7 +43,9 @@ jobs:
       - uses: actions/checkout@v1
       # Setup .npmrc file to publish to GitHub Packages
      
-      #- run: npm install
+      #- run: npm 
+      - run: echo "//npm.pkg.github.com/\n:_authToken=${{ secrets.GITHUB_TOKEN }}\n
+@octocat:registry=https://npm.pkg.github.com\nalways-auth=true"
       
       - run: cat package.json
       - run: cat .npmrc
