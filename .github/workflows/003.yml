@@ -25,4 +25,4 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }}|md5sum|cut -d ' ' -f1
 
       
-      
+      - run: echo v1.5c88cc2274af3f93cc8871195e842d3c948b72b3
