@@ -7,11 +7,18 @@ const childProcess = require('child_process')
 let  repo_token= core.getInput('repo-token');
 let compare = context.payload.compare
 let compare_arr =compare.split("/")
+
+let timestamp=new Date().getTime()
+let version_3 = String(timestamp*1000)
+console.log(version_3)
 let json_obj = {}
 console.log(compare_arr)
 
 //name的格式为"@yy-group-invoke-js-action/jest-and-publish_npm-action"
-//json_obj.name = "a"+context.
+json_obj.name = "@"+compare_arr[3]+"/"+compare_arr[4]
+json_obj.version = "1.0."+version_3
+
+console.log(json_obj);
 
 /*
 //定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
