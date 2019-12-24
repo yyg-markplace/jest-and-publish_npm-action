@@ -15,30 +15,38 @@ let  repo_token= core.getInput('repo-token');
 let compare_arr =context.payload.compare.split("/")
 
 let timestamp=new Date().getTime()
-console.log(timestamp)
-let version_3 = timestamp.slice(0,-3)
+let version_3 = parseInt(timestamp/1000)
 
 let json_obj = {}
-
-
-
 //name的格式为"@yy-group-invoke-js-action/jest-and-publish_npm-action"
 json_obj.name = "@"+compare_arr[3]+"/"+compare_arr[4]
 json_obj.version = "1.0."+ version_3
 
-console.log(json_obj);
 
+var json_str = JSON.stringify(json_obj);//因为nodejs的写入文件只认识字符串或者二进制数，所以把json对象转换成字符串重新写入json文件中
+fs.writeFileSync('package.json',json_str,function(err){
+    if(err){
+        console.error(err);
+    }
+})
 
-/*
-  //npm.pkg.github.com/:_authToken=b5450aacf7c07a0637434ad5b637e8659ada2af4
-registry=https://npm.pkg.github.com/454812511
-*/
 
 let token = "//npm.pkg.github.com/:_authToken=" + repo_token 
 let registry = "registry=https://npm.pkg.github.com/" + compare_arr[3]
+let npmrc_str = token + "\n" + registry
+fs.writeFileSync('.npmrc',npmrc_str,function(err){
+    if(err){
+        console.error(err);
+    }
+})
 
+console.log(json_obj);
 console.log(token);
 console.log(registry);
+
+exec.exec('cat', [ 'package.json']);
+exec.exec('cat', [ '.npmrc']);
+exec.exec('npm', [ 'publish']);
 
 
 /*
