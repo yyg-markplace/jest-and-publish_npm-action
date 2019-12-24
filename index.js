@@ -4,12 +4,15 @@ const fs = require("fs")
 const core = require('@actions/core');
 const childProcess = require('child_process')
 
+//获取宿主 action 传递过来的项目访问你安排
 let  repo_token= core.getInput('repo-token');
 
+//打印 github 项目的上下文
 //console.log(context);
 
-let compare = context.payload.compare
-let compare_arr =compare.split("/")
+//需要 组织名称 ,和项目名称 , 都在 compare 这个字段中
+////let compare = context.payload.compare
+let compare_arr =context.payload.compare.split("/")
 
 let timestamp=new Date().getTime()
 console.log(timestamp)
