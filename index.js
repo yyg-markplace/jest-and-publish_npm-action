@@ -6,69 +6,6 @@ const childProcess = require('child_process')
 
 
 
-
-//定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
-let p_install_jest_state = 1
-let p_git_clone_state = 1
-let write_file_state = 1
-let timeout_status = 0
-//初始化 超时标志位 0 ,  当多个进程都返回 0 的时候 , 进入循环中 , 然后立即将循环体重的超时标志设为 1 ,防止多次运行
-
-
-//使用多线程去全局安装 jest
-let p_install_jest = childProcess.exec("sudo npm install -g jest")
-
-//使用多线程克隆 js-action 宿主仓库
-let git_clone_command = "git clone " + context.payload.repository.git_url
-let p_git_clone = childProcess.exec(git_clone_command)
-
-//在主线程执行 写入 package.json 和 npmrc
-write_config_file()
-//jest 命令需要package.json 文件 ,  临时安装一下 
-// 注意: 对于 json 格式需要 python 工具格式化 , 不然 echo 总是错误
-////let package_contain = `echo '{"scripts":{"test":"jest"}}'|python -m json.tool > package.json`
-////let p_generate_package = childProcess.exec(package_contain)
-
-////运行 jest 命令  jest 命令需要等着 3 个条件都满足了才能运行 , 将这个多线程的定义放在循环体中
-//// let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
-
-//还有一个创建 npmrc 文件使用 多进程生成文件
-
-
-//回调函数,  正常退出返回代码 0 
-p_install_jest.on('exit', (code) => {
-    p_install_jest_state = code
-})
-p_git_clone.on('exit', (code) => {
-    p_git_clone_state = code
-})
-
-//p_generate_package.on('exit', (code) => {
- //   result_p_generate_package = code
-//})
-
-
-let time = setInterval(function () {
-    if (!(p_install_jest_state + p_git_clone_state + write_file_state + timeout_status)) {
-        // 进入循环之后, 立即将超时标志设为 1 , 是if 中的表达式为 0 ,就不会再次执行这段逻辑了
-        timeout_status = 1
-
-        console.log("已经安装 jest , 克隆宿主仓库 , 新建 package.json 完成")
-        console.log("在循环体中运行多线程 , 多进程调用 jest 命令测试")
-        let p_run_jest = childProcess.exec('jest --json --outputFile jest-result.json')
-        p_run_jest.on('exit', (code) => {
-            if (!(code)) {
-                //code == 0 表示正常退出
-                run_jest_output_result()
-            }
-            //run_jest_output_result ()
-        })
-
-        //这一个异步执行完毕之后, 就删除这个循环定时器
-        clearInterval(time)
-    }
-}, 300)
-
 let run_jest_output_result = async function () {
 
     ////await exec.exec('cat', [ 'package.json']);
@@ -138,6 +75,69 @@ let write_config_file =  function () {
     //await exec.exec('npm', ['publish']);
     write_file_state = 0
 }
+
+//定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
+let p_install_jest_state = 1
+let p_git_clone_state = 1
+let write_file_state = 1
+let timeout_status = 0
+//初始化 超时标志位 0 ,  当多个进程都返回 0 的时候 , 进入循环中 , 然后立即将循环体重的超时标志设为 1 ,防止多次运行
+
+
+//使用多线程去全局安装 jest
+let p_install_jest = childProcess.exec("sudo npm install -g jest")
+
+//使用多线程克隆 js-action 宿主仓库
+let git_clone_command = "git clone " + context.payload.repository.git_url
+let p_git_clone = childProcess.exec(git_clone_command)
+
+//在主线程执行 写入 package.json 和 npmrc
+write_config_file()
+//jest 命令需要package.json 文件 ,  临时安装一下 
+// 注意: 对于 json 格式需要 python 工具格式化 , 不然 echo 总是错误
+////let package_contain = `echo '{"scripts":{"test":"jest"}}'|python -m json.tool > package.json`
+////let p_generate_package = childProcess.exec(package_contain)
+
+////运行 jest 命令  jest 命令需要等着 3 个条件都满足了才能运行 , 将这个多线程的定义放在循环体中
+//// let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
+
+//还有一个创建 npmrc 文件使用 多进程生成文件
+
+
+//回调函数,  正常退出返回代码 0 
+p_install_jest.on('exit', (code) => {
+    p_install_jest_state = code
+})
+p_git_clone.on('exit', (code) => {
+    p_git_clone_state = code
+})
+
+//p_generate_package.on('exit', (code) => {
+ //   result_p_generate_package = code
+//})
+
+
+let time = setInterval(function () {
+    if (!(p_install_jest_state + p_git_clone_state + write_file_state + timeout_status)) {
+        // 进入循环之后, 立即将超时标志设为 1 , 是if 中的表达式为 0 ,就不会再次执行这段逻辑了
+        timeout_status = 1
+
+        console.log("已经安装 jest , 克隆宿主仓库 , 新建 package.json 完成")
+        console.log("在循环体中运行多线程 , 多进程调用 jest 命令测试")
+        let p_run_jest = childProcess.exec('jest --json --outputFile jest-result.json')
+        p_run_jest.on('exit', (code) => {
+            if (!(code)) {
+                //code == 0 表示正常退出
+                run_jest_output_result()
+            }
+            //run_jest_output_result ()
+        })
+
+        //这一个异步执行完毕之后, 就删除这个循环定时器
+        clearInterval(time)
+    }
+}, 300)
+
 
 /*
 
