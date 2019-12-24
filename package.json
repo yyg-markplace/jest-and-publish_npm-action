@@ -12,8 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yy-group-invoke-js-action/jest-and-publish_npm-action.git"
+    "url": "git//github.com/yy-group-invoke-js-action/jest-and-publish_npm-action.git"
   },
   "keywords": [],
   "author": "",

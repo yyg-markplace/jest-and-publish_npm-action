@@ -4,6 +4,13 @@ const fs = require("fs")
 const core = require('@actions/core');
 const childProcess = require('child_process')
 
+let  repo_token= core.getInput('repo-token');
+
+let json_obj = {}
+console.log(context)
+//json_obj.name = 
+
+/*
 //定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
 let result_p_install_jest = 1
 let result_p_git_clone = 1
@@ -81,6 +88,8 @@ let time = setInterval(function(){
         clearInterval(time)
     }
 } , 300)
+
+*/
 /*
 
 let run = async function(){

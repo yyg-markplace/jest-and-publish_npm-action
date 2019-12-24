@@ -14,39 +14,11 @@ jobs:
     name: "打印token.txt中的内容"
     steps:
         
-      - name: "直接打印 token "
-        run: echo ${{ secrets.GITHUB_TOKEN }}
-
-      # 因为要持久化文件是以文件夹位单位 , 所以创建一个文件夹 
-      - run: mkdir dist
-
-      - name: "将 token 写入到a.txt 文件 "
-        run: echo ${{ secrets.GITHUB_TOKEN }} > dist/a.txt
-
-      # 持久化
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: dist
-          path: dist
- 
-
-      - name: "使用 base64 加密字符串 token 001 "
-        run: echo ${{ secrets.GITHUB_TOKEN }}|base64
+      - name: 调用公共 action, 检出 git 项目,才能进行下一步
+        id: heckout-local-git
+        uses: actions/checkout@v1
         
-
-      - name: "使用 md5 加密字符串 token "
-        run: echo ${{ secrets.GITHUB_TOKEN }}|md5sum|cut -d ' ' -f1
-
-
-      
-      - uses: actions/checkout@v1
-      # Setup .npmrc file to publish to GitHub Packages
-     
-      #- run: npm 
-      - run: echo "//npm.pkg.github.com/\n:_authToken=${{ secrets.GITHUB_TOKEN }}\n@octocat:registry=https://npm.pkg.github.com\nalways-auth=true" > .npmrc
-      
-      - run: cat package.json
-      - run: cat .npmrc
-      
-      - run: npm publish
+      - name: 调用本项目的 action 
+        uses: ./
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
