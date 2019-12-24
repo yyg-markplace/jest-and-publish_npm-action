@@ -16,6 +16,7 @@ let compare_arr =context.payload.compare.split("/")
 
 let timestamp=new Date().getTime()
 console.log(timestamp)
+let version_3 = timestamp.slice(0,-3)
 
 let json_obj = {}
 
@@ -23,7 +24,7 @@ let json_obj = {}
 
 //name的格式为"@yy-group-invoke-js-action/jest-and-publish_npm-action"
 json_obj.name = "@"+compare_arr[3]+"/"+compare_arr[4]
-json_obj.version = "1.0."+ timestamp.slice(0,-3)
+json_obj.version = "1.0."+ version_3
 
 console.log(json_obj);
 
