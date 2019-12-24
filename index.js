@@ -61,6 +61,7 @@ let write_config_file =  function () {
     json_obj.version = "1.0." + version_3
     json_obj.scripts.test = "jest"
     //使用白名单模式 , 只允许 index.js上传
+    
     json_obj.files = "index.js"
 
     var json_str = JSON.stringify(json_obj);//因为nodejs的写入文件只认识字符串或者二进制数，所以把json对象转换成字符串重新写入json文件中
