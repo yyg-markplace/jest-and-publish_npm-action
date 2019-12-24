@@ -5,7 +5,7 @@ const core = require('@actions/core');
 const childProcess = require('child_process')
 
 
-
+//当 jest 安装好了之后 ,读取 jest 测试的结果文件
 let run_jest_output_result = async function () {
 
     ////await exec.exec('cat', [ 'package.json']);
@@ -21,15 +21,20 @@ let run_jest_output_result = async function () {
 
         if (jest_result.success) {
             console.log("jest 测试成功")
+            //测试成功之后, 使用多进程发布到 npm-github
             let p_npm_publish = childProcess.exec("npm publish")
             p_npm_publish.on('exit', (code) => {
                 if (!(code)) {
                     //code == 0 表示正常退出
                     console.log("====== 发布成功 ====== ")
+                }else{
+                    console.log(" ====== 发布失败 ======")
                 }
             })
         } else {
             console.log("jest 测试失败")
+            //看看直接打印错误行不行
+            console.log(data)
         }
     })
 }
@@ -45,6 +50,7 @@ let write_config_file =  function () {
     //需要 组织名称 ,和项目名称 , 都在 compare 这个字段中
     let compare_arr = context.payload.compare.split("/")
 
+    //使用时间戳 作为 version的最后一段
     let timestamp = new Date().getTime()
     let version_3 = parseInt(timestamp / 1000)
 
@@ -54,7 +60,8 @@ let write_config_file =  function () {
     json_obj.name = "@" + compare_arr[3] + "/" + compare_arr[4]
     json_obj.version = "1.0." + version_3
     json_obj.scripts.test = "jest"
-
+    //使用白名单模式 , 只允许 index.js上传
+    json_obj.file = "index.js"
 
     var json_str = JSON.stringify(json_obj);//因为nodejs的写入文件只认识字符串或者二进制数，所以把json对象转换成字符串重新写入json文件中
     fs.writeFileSync('package.json', json_str, function (err) {
@@ -72,14 +79,14 @@ let write_config_file =  function () {
         }
     })
 
+    // 写入json 和 .npmrc 文件之后, 立即将状态设置为 0 
+    write_file_state = 0
     //console.log(json_obj);
     //console.log(token);
     //console.log(registry);
 
     //exec.exec('cat', ['package.json']);
     //exec.exec('cat', ['.npmrc']);
-    //await exec.exec('npm', ['publish']);
-    write_file_state = 0
 }
 
 //定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
@@ -98,17 +105,8 @@ let git_clone_command = "git clone " + context.payload.repository.git_url
 let p_git_clone = childProcess.exec(git_clone_command)
 
 //在主线程执行 写入 package.json 和 npmrc
+////注意写配置文件文件完成之后 , 立即将状态设置为 0 
 write_config_file()
-//jest 命令需要package.json 文件 ,  临时安装一下 
-// 注意: 对于 json 格式需要 python 工具格式化 , 不然 echo 总是错误
-////let package_contain = `echo '{"scripts":{"test":"jest"}}'|python -m json.tool > package.json`
-////let p_generate_package = childProcess.exec(package_contain)
-
-////运行 jest 命令  jest 命令需要等着 3 个条件都满足了才能运行 , 将这个多线程的定义放在循环体中
-//// let p_run_jest = childProcess.exec( 'jest --json --outputFile jest-result.json')
-
-//还有一个创建 npmrc 文件使用 多进程生成文件
-
 
 //回调函数,  正常退出返回代码 0 
 p_install_jest.on('exit', (code) => {
@@ -118,11 +116,7 @@ p_git_clone.on('exit', (code) => {
     p_git_clone_state = code
 })
 
-//p_generate_package.on('exit', (code) => {
- //   result_p_generate_package = code
-//})
-
-
+// 循环查看主线程和多线程的结果 , 都成功退出 , 就执行 新的多线程 用来 jest 测试
 let time = setInterval(function () {
     if (!(p_install_jest_state + p_git_clone_state + write_file_state + timeout_status)) {
         // 进入循环之后, 立即将超时标志设为 1 , 是if 中的表达式为 0 ,就不会再次执行这段逻辑了
@@ -134,9 +128,9 @@ let time = setInterval(function () {
         p_run_jest.on('exit', (code) => {
             if (!(code)) {
                 //code == 0 表示正常退出
+                //使用一个函数来分析测试结果
                 run_jest_output_result()
             }
-            //run_jest_output_result ()
         })
 
         //这一个异步执行完毕之后, 就删除这个循环定时器
