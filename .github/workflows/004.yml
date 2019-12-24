@@ -1,0 +1,24 @@
+## 在分支 003 上
+## 目的 将 token 进行 md5 编码 ,输出
+
+on: 
+  push:
+      branches: 
+        - 004
+ 
+name: "在分支 004 中"
+
+jobs:
+  job_01:
+    runs-on: ubuntu-latest
+    name: "打印token.txt中的内容"
+    steps:
+        
+      - name: 调用公共 action, 检出 git 项目,才能进行下一步
+        id: heckout-local-git
+        uses: actions/checkout@v1
+        
+      - name: 调用本项目的 action 
+        uses: ./
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
