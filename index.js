@@ -21,6 +21,8 @@ let json_obj = {}
 //name的格式为"@yy-group-invoke-js-action/jest-and-publish_npm-action"
 json_obj.name = "@"+compare_arr[3]+"/"+compare_arr[4]
 json_obj.version = "1.0."+ version_3
+json_obj.scripts = {}
+json_obj.scripts.test = "jest"
 
 
 var json_str = JSON.stringify(json_obj);//因为nodejs的写入文件只认识字符串或者二进制数，所以把json对象转换成字符串重新写入json文件中
