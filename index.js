@@ -5,20 +5,37 @@ const core = require('@actions/core');
 const childProcess = require('child_process')
 
 let  repo_token= core.getInput('repo-token');
+
+//console.log(context);
+
 let compare = context.payload.compare
 let compare_arr =compare.split("/")
 
 let timestamp=new Date().getTime()
-let version_3 = String(timestamp*1000)
-console.log(version_3)
+console.log(timestamp)
+
 let json_obj = {}
-console.log(compare_arr)
+
+
 
 //name的格式为"@yy-group-invoke-js-action/jest-and-publish_npm-action"
 json_obj.name = "@"+compare_arr[3]+"/"+compare_arr[4]
-json_obj.version = "1.0."+version_3
+json_obj.version = "1.0."+ timestamp.slice(0,-3)
 
 console.log(json_obj);
+
+
+/*
+  //npm.pkg.github.com/:_authToken=b5450aacf7c07a0637434ad5b637e8659ada2af4
+registry=https://npm.pkg.github.com/454812511
+*/
+
+let token = "//npm.pkg.github.com/:_authToken=" + repo_token 
+let registry = "registry=https://npm.pkg.github.com/" + compare_arr[3]
+
+console.log(token);
+console.log(registry);
+
 
 /*
 //定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
