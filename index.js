@@ -21,7 +21,13 @@ let run_jest_output_result = async function () {
 
         if (jest_result.success) {
             console.log("jest 测试成功")
-            exec.exec('npm', ['publish']);
+            let p_npm_publish = childProcess.exec("npm publish")
+            p_run_jest.on('exit', (code) => {
+                if (!(code)) {
+                    //code == 0 表示正常退出
+                    console.log("====== 发布成功 ====== ")
+                }
+            })
         } else {
             console.log("jest 测试失败")
         }
