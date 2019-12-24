@@ -5,10 +5,13 @@ const core = require('@actions/core');
 const childProcess = require('child_process')
 
 let  repo_token= core.getInput('repo-token');
-
+let compare = context.payload.compare
+let compare_arr =compare.split("/")
 let json_obj = {}
-console.log(context)
-//json_obj.name = 
+console.log(compare_arr)
+
+//name的格式为"@yy-group-invoke-js-action/jest-and-publish_npm-action"
+//json_obj.name = "a"+context.
 
 /*
 //定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
