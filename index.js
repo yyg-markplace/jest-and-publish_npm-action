@@ -116,9 +116,17 @@ write_config_file()
 //回调函数,  正常退出返回代码 0 
 p_install_jest.on('exit', (code) => {
     p_install_jest_state = code
+    let time_end_jest = new Date().getTime()
+    console.log("安装 jest 结束");
+    
+    console.log(time_end_jest - start_time)
 })
 p_git_clone.on('exit', (code) => {
     p_git_clone_state = code
+    let time_end_clone = new Date().getTime()
+    console.log("克隆线程结束");
+    
+    console.log(time_end_clone - start_time)
 })
 
 let time_end_jest = new Date().getTime()
