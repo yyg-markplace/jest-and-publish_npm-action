@@ -93,6 +93,10 @@ let write_config_file =  function () {
     //exec.exec('cat', ['.npmrc']);
 }
 
+//使用多线程克隆 js-action 宿主仓库
+let git_clone_command = "git clone " + context.payload.repository.git_url
+let p_git_clone = childProcess.exec(git_clone_command)
+
 let main = function(){
     //定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
     let p_install_jest_state = 1
@@ -104,9 +108,7 @@ let main = function(){
     //使用多线程去全局安装 jest
     let p_install_jest = childProcess.exec("sudo npm install -g jest")
 
-    //使用多线程克隆 js-action 宿主仓库
-    let git_clone_command = "git clone " + context.payload.repository.git_url
-    let p_git_clone = childProcess.exec(git_clone_command)
+    
 
     //回调函数,  正常退出返回代码 0 
     p_install_jest.on('exit', (code) => {
