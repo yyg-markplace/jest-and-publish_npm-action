@@ -175,8 +175,7 @@ let main = function(){
             timeout_status = 1
     
             run_jest_command()
-            check_jest_output_result()
-
+            check_run_result_and_publish()
             clearInterval(time)
         }
 
