@@ -103,6 +103,30 @@ let write_config_file =  function () {
     //exec.exec('cat', ['.npmrc']);
 }
 
+let run_jest_command = async function(){
+    await exec.exec('jest', [ '--json','--outputFile' , 'jest-result.json']);
+    console.log("jest测试结束 , 并将结果输出在jest-result.json文件中")
+
+    console.log("读取 json 文件,查看 jest 测试结果")
+    fs.readFile('jest-result.json',function(err,data){
+        if(err){
+            return console.error(err);
+        }
+        //先将 data 转换成字符串 , 然后用 json反序列化
+        let jest_result=JSON.parse( data.toString())
+
+        if(jest_result.success){
+            console.log("jest 测试成功")
+             //使用一个函数来分析测试结果
+             run_jest_output_result()
+        } else{
+            console.log("jest 测试失败")
+        }
+
+        //这一个异步执行完毕之后, 就删除这个循环定时器
+        clearInterval(time)
+    })
+}
 let main = function(){
     
 
@@ -130,13 +154,16 @@ let main = function(){
     })
 
     let time = setInterval(function () {
-        /*
+        
         if (!(p_install_jest_state + p_git_clone_state + write_file_state + timeout_status)) {
+            
             // 进入循环之后, 立即将超时标志设为 1 , 是if 中的表达式为 0 ,就不会再次执行这段逻辑了
             timeout_status = 1
     
             console.log("已经安装 jest , 克隆宿主仓库 , 新建 package.json 完成")
             console.log("在循环体中运行多线程 , 多进程调用 jest 命令测试")
+            run_jest_command()
+            /*
             let p_run_jest = childProcess.exec('jest --json --outputFile jest-result.json')
             p_run_jest.on('exit', (code) => {
                 if (!(code)) {
@@ -148,8 +175,9 @@ let main = function(){
     
             //这一个异步执行完毕之后, 就删除这个循环定时器
             clearInterval(time)
+            */
         }
-        */
+        
        console.log("install jest == "+ p_install_jest_state)
        console.log("clone ==" + p_git_clone_state);
        console.log("write_file == " + write_file_state)
