@@ -15,12 +15,13 @@ let write_file_state = 1
 let timeout_status = 0
 //初始化 超时标志位 0 ,  当多个进程都返回 0 的时候 , 进入循环中 , 然后立即将循环体重的超时标志设为 1 ,防止多次运行
 
-
+let run_publish_command = async function(){
+    console.log("==== 在异步函数中执行命令npm publish ")
+    await exec.exec('npm', [ 'publish']);
+}
 //当 jest 安装好了之后 ,读取 jest 测试的结果文件
-let check_run_result_and_publish = async function () {
+let check_run_result= async function () {
 
-    ////await exec.exec('cat', [ 'package.json']);
-    // 本来是用 同步运行命令是醉了方便的 ,但是,同步运行 jest 命令 ,会输出多余的结果 ,为了避免干扰 , 使用多线程 ,这样不会输出额外的结果
 
     console.log("==== 读取 jest-result.json,查看 jest 测试结果")
     fs.readFile('jest-result.json', function (err, data) {
@@ -33,18 +34,7 @@ let check_run_result_and_publish = async function () {
         if (jest_result.success) {
             console.log("jest 测试成功")
             //测试成功之后, 使用多进程发布到 npm-github
-            console.log("==== 在异步函数中执行命令npm publish ")
-            exec.exec('npm', [ 'publish']);
-            /*let p_npm_publish = childProcess.exec("npm publish")
-            p_npm_publish.on('exit', (code) => {
-                if (!(code)) {
-                    //code == 0 表示正常退出
-                    console.log("====== 发布成功 ====== ")
-                }else{
-                    console.log(" ====== 发布失败 ======")
-                }
-            })
-            */
+            run_publish_command()
         } else {
             console.log("jest 测试失败")
             //看看直接打印错误行不行
@@ -109,33 +99,10 @@ let write_config_file =  function () {
 let run_jest_command = async function(){
     console.log("==== 在异步函数中执行命令jest , 并将结果输出在jest-result.json文件中")
     await exec.exec('jest', [ '--json','--outputFile' , 'jest-result.json']);
-    check_run_result_and_publish()
-/*
-    console.log("同步命令 jest 执行完毕");
-    //读取 json 文件,查看 jest 测试结果
-    fs.readFile('jest-result.json',function(err,data){
-        console.log("读取 jest-result.json 文件 , 查看 jest 结果");
-        
-        if(err){
-            return console.error(err);
-        }
-        //先将 data 转换成字符串 , 然后用 json反序列化
-        let jest_result=JSON.parse( data.toString())
+    check_run_result()
 
-        if(jest_result.success){
-            console.log("jest 测试成功")
-             //使用一个函数来分析测试结果
-             run_jest_output_result()
-        } else{
-            console.log("jest 测试失败")
-        }
-
-        //这一个异步执行完毕之后, 就删除这个循环定时器
-        //clearInterval(time)
-        
-    })
-    */
 }
+
 let main = function(){
     console.log("==== 进入 main 函数");
 
@@ -186,8 +153,6 @@ let main = function(){
     } , 50*1000)
     */
 }
-
-
 
 main()
 
