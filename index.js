@@ -34,7 +34,7 @@ let check_run_result_and_publish = async function () {
             console.log("jest 测试成功")
             //测试成功之后, 使用多进程发布到 npm-github
             console.log("==== 在异步函数中执行命令npm publish ")
-            await exec.exec('npm', [ 'publish']);
+            exec.exec('npm', [ 'publish']);
             /*let p_npm_publish = childProcess.exec("npm publish")
             p_npm_publish.on('exit', (code) => {
                 if (!(code)) {
