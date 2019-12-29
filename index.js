@@ -4,6 +4,7 @@ const fs = require("fs")
 const core = require('@actions/core');
 const childProcess = require('child_process')
 
+let start_time = new Date().getTime()
 
 //当 jest 安装好了之后 ,读取 jest 测试的结果文件
 let run_jest_output_result = async function () {
@@ -101,6 +102,9 @@ let timeout_status = 0
 //使用多线程去全局安装 jest
 let p_install_jest = childProcess.exec("sudo npm install -g jest")
 
+let time_install_jest = new Date().getTime()
+console.log(time_install_jest - start_time)
+
 //使用多线程克隆 js-action 宿主仓库
 let git_clone_command = "git clone " + context.payload.repository.git_url
 let p_git_clone = childProcess.exec(git_clone_command)
@@ -116,6 +120,9 @@ p_install_jest.on('exit', (code) => {
 p_git_clone.on('exit', (code) => {
     p_git_clone_state = code
 })
+
+let time_end_jest = new Date().getTime()
+console.log(time_end_jest - start_time)
 
 // 循环查看主线程和多线程的结果 , 都成功退出 , 就执行 新的多线程 用来 jest 测试
 let time = setInterval(function () {
