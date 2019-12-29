@@ -164,34 +164,19 @@ let main = function(){
             console.log("在循环体中运行多线程 , 多进程调用 jest 命令测试")
             run_jest_command()
             clearInterval(time)
-            /*
-            let p_run_jest = childProcess.exec('jest --json --outputFile jest-result.json')
-            p_run_jest.on('exit', (code) => {
-                if (!(code)) {
-                    //code == 0 表示正常退出
-                    //使用一个函数来分析测试结果
-                    run_jest_output_result()
-                }
-            })
-    
-            //这一个异步执行完毕之后, 就删除这个循环定时器
-            clearInterval(time)
-            */
         }
         
-       console.log("install jest == "+ p_install_jest_state)
-       console.log("clone ==" + p_git_clone_state);
-       console.log("write_file == " + write_file_state)
        
        
        
        
 
-    }, 3000)
-    
+    }, 300)
+    /*
     let outtime = setTimeout(function(){
         clearInterval(time)
     } , 50*1000)
+    */
 }
 
 
