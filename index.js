@@ -83,7 +83,7 @@ let write_config_file =  function () {
 
     // 写入json 和 .npmrc 文件之后, 立即将状态设置为 0 
     write_file_state = 0
-    //console.log(json_obj);
+    console.log(json_obj);
     //console.log(token);
     //console.log(registry);
 
