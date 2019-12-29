@@ -121,7 +121,7 @@ let main = function(){
         write_config_file()
 
     })
-
+/*
     let time = setInterval(function () {
         if (!(p_install_jest_state + p_git_clone_state + write_file_state + timeout_status)) {
             // 进入循环之后, 立即将超时标志设为 1 , 是if 中的表达式为 0 ,就不会再次执行这段逻辑了
@@ -142,6 +142,7 @@ let main = function(){
             clearInterval(time)
         }
     }, 300)
+    */
 }
 
 
