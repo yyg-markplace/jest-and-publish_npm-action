@@ -109,7 +109,7 @@ let write_config_file =  function () {
 let run_jest_command = async function(){
     console.log("==== 在异步函数中执行命令jest , 并将结果输出在jest-result.json文件中")
     await exec.exec('jest', [ '--json','--outputFile' , 'jest-result.json']);
-    
+    check_run_result_and_publish()
 /*
     console.log("同步命令 jest 执行完毕");
     //读取 json 文件,查看 jest 测试结果
@@ -175,7 +175,7 @@ let main = function(){
             timeout_status = 1
     
             run_jest_command()
-            check_run_result_and_publish()
+            //check_run_result_and_publish()
             clearInterval(time)
         }
 
