@@ -159,7 +159,7 @@ let main = function(){
     
     let outtime = setTimeout(function(){
         clearInterval(time)
-    } , 30*1000)
+    } , 50*1000)
 }
 
 
