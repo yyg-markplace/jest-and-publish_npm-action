@@ -91,68 +91,61 @@ let write_config_file =  function () {
     //exec.exec('cat', ['.npmrc']);
 }
 
-//定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
-let p_install_jest_state = 1
-let p_git_clone_state = 1
-let write_file_state = 1
-let timeout_status = 0
-//初始化 超时标志位 0 ,  当多个进程都返回 0 的时候 , 进入循环中 , 然后立即将循环体重的超时标志设为 1 ,防止多次运行
+let main = function(){
+    //定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
+    let p_install_jest_state = 1
+    let p_git_clone_state = 1
+    let write_file_state = 1
+    let timeout_status = 0
+    //初始化 超时标志位 0 ,  当多个进程都返回 0 的时候 , 进入循环中 , 然后立即将循环体重的超时标志设为 1 ,防止多次运行
 
+    //使用多线程去全局安装 jest
+    let p_install_jest = childProcess.exec("sudo npm install -g jest")
 
-//使用多线程去全局安装 jest
-let p_install_jest = childProcess.exec("sudo npm install -g jest")
+    //使用多线程克隆 js-action 宿主仓库
+    let git_clone_command = "git clone " + context.payload.repository.git_url
+    let p_git_clone = childProcess.exec(git_clone_command)
 
-let time_install_jest = new Date().getTime()
-console.log(time_install_jest - start_time)
+    //回调函数,  正常退出返回代码 0 
+    p_install_jest.on('exit', (code) => {
+        p_install_jest_state = code
+        //let time_end_jest = new Date().getTime()
+        //console.log("安装 jest 结束");
+        //console.log(time_end_jest - start_time)
+    })
+    p_git_clone.on('exit', (code) => {
+        p_git_clone_state = code
+        //let time_end_clone = new Date().getTime()
+        //console.log("克隆线程结束");
+        //console.log(time_end_clone - start_time)
+        write_config_file()
 
-//使用多线程克隆 js-action 宿主仓库
-let git_clone_command = "git clone " + context.payload.repository.git_url
-let p_git_clone = childProcess.exec(git_clone_command)
+    })
 
-//在主线程执行 写入 package.json 和 npmrc
-////注意写配置文件文件完成之后 , 立即将状态设置为 0 
-write_config_file()
-
-//回调函数,  正常退出返回代码 0 
-p_install_jest.on('exit', (code) => {
-    p_install_jest_state = code
-    let time_end_jest = new Date().getTime()
-    console.log("安装 jest 结束");
+    let time = setInterval(function () {
+        if (!(p_install_jest_state + p_git_clone_state + write_file_state + timeout_status)) {
+            // 进入循环之后, 立即将超时标志设为 1 , 是if 中的表达式为 0 ,就不会再次执行这段逻辑了
+            timeout_status = 1
     
-    console.log(time_end_jest - start_time)
-})
-p_git_clone.on('exit', (code) => {
-    p_git_clone_state = code
-    let time_end_clone = new Date().getTime()
-    console.log("克隆线程结束");
+            console.log("已经安装 jest , 克隆宿主仓库 , 新建 package.json 完成")
+            console.log("在循环体中运行多线程 , 多进程调用 jest 命令测试")
+            let p_run_jest = childProcess.exec('jest --json --outputFile jest-result.json')
+            p_run_jest.on('exit', (code) => {
+                if (!(code)) {
+                    //code == 0 表示正常退出
+                    //使用一个函数来分析测试结果
+                    run_jest_output_result()
+                }
+            })
     
-    console.log(time_end_clone - start_time)
-})
+            //这一个异步执行完毕之后, 就删除这个循环定时器
+            clearInterval(time)
+        }
+    }, 300)
+}
 
-let time_end_jest = new Date().getTime()
-console.log(time_end_jest - start_time)
 
-// 循环查看主线程和多线程的结果 , 都成功退出 , 就执行 新的多线程 用来 jest 测试
-let time = setInterval(function () {
-    if (!(p_install_jest_state + p_git_clone_state + write_file_state + timeout_status)) {
-        // 进入循环之后, 立即将超时标志设为 1 , 是if 中的表达式为 0 ,就不会再次执行这段逻辑了
-        timeout_status = 1
 
-        console.log("已经安装 jest , 克隆宿主仓库 , 新建 package.json 完成")
-        console.log("在循环体中运行多线程 , 多进程调用 jest 命令测试")
-        let p_run_jest = childProcess.exec('jest --json --outputFile jest-result.json')
-        p_run_jest.on('exit', (code) => {
-            if (!(code)) {
-                //code == 0 表示正常退出
-                //使用一个函数来分析测试结果
-                run_jest_output_result()
-            }
-        })
-
-        //这一个异步执行完毕之后, 就删除这个循环定时器
-        clearInterval(time)
-    }
-}, 300)
 
 
 /*
