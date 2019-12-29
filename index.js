@@ -4,6 +4,8 @@ const fs = require("fs")
 const core = require('@actions/core');
 const childProcess = require('child_process')
 
+console.log("==== 项目开始");
+
 let start_time = new Date().getTime()
 
 //定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
@@ -15,12 +17,12 @@ let timeout_status = 0
 
 
 //当 jest 安装好了之后 ,读取 jest 测试的结果文件
-let run_jest_output_result = async function () {
+let check_run_result_and_publish = async function () {
 
     ////await exec.exec('cat', [ 'package.json']);
     // 本来是用 同步运行命令是醉了方便的 ,但是,同步运行 jest 命令 ,会输出多余的结果 ,为了避免干扰 , 使用多线程 ,这样不会输出额外的结果
 
-    console.log("读取 json 文件,查看 jest 测试结果")
+    console.log("==== 读取 jest-result.json,查看 jest 测试结果")
     fs.readFile('jest-result.json', function (err, data) {
         if (err) {
             return console.error(err);
@@ -31,7 +33,9 @@ let run_jest_output_result = async function () {
         if (jest_result.success) {
             console.log("jest 测试成功")
             //测试成功之后, 使用多进程发布到 npm-github
-            let p_npm_publish = childProcess.exec("npm publish")
+            console.log("==== 在异步函数中执行命令npm publish ")
+            await exec.exec('npm', [ 'publish']);
+            /*let p_npm_publish = childProcess.exec("npm publish")
             p_npm_publish.on('exit', (code) => {
                 if (!(code)) {
                     //code == 0 表示正常退出
@@ -40,6 +44,7 @@ let run_jest_output_result = async function () {
                     console.log(" ====== 发布失败 ======")
                 }
             })
+            */
         } else {
             console.log("jest 测试失败")
             //看看直接打印错误行不行
@@ -49,7 +54,8 @@ let run_jest_output_result = async function () {
 }
 
 let write_config_file =  function () {
-
+    console.log("==== 开始写入配置信息");
+    
     //获取宿主 action 传递过来的项目访问你安排
     let repo_token = core.getInput('repo-token');
 
@@ -94,21 +100,22 @@ let write_config_file =  function () {
     // 写入json 和 .npmrc 文件之后, 立即将状态设置为 0 
     write_file_state = 0
 
-    console.log("输出 新的package.json 配置文件");
+    console.log("新的package.json 配置文件");
     console.log(json_obj);
-    //console.log(token);
-    //console.log(registry);
 
-    //exec.exec('cat', ['package.json']);
-    //exec.exec('cat', ['.npmrc']);
+    console.log("==== 写入配置信息结束");
 }
 
 let run_jest_command = async function(){
+    console.log("==== 在异步函数中执行命令jest , 并将结果输出在jest-result.json文件中")
     await exec.exec('jest', [ '--json','--outputFile' , 'jest-result.json']);
-    console.log("jest测试结束 , 并将结果输出在jest-result.json文件中")
-
-    console.log("读取 json 文件,查看 jest 测试结果")
+    
+/*
+    console.log("同步命令 jest 执行完毕");
+    //读取 json 文件,查看 jest 测试结果
     fs.readFile('jest-result.json',function(err,data){
+        console.log("读取 jest-result.json 文件 , 查看 jest 结果");
+        
         if(err){
             return console.error(err);
         }
@@ -125,10 +132,12 @@ let run_jest_command = async function(){
 
         //这一个异步执行完毕之后, 就删除这个循环定时器
         //clearInterval(time)
+        
     })
+    */
 }
 let main = function(){
-    
+    console.log("==== 进入 main 函数");
 
     //使用多线程去全局安装 jest
     let p_install_jest = childProcess.exec("sudo npm install -g jest")
@@ -139,12 +148,16 @@ let main = function(){
 
     //回调函数,  正常退出返回代码 0 
     p_install_jest.on('exit', (code) => {
+        console.log("==== 多线程安装 jest 结束");
+        
         p_install_jest_state = code
         //let time_end_jest = new Date().getTime()
         //console.log("安装 jest 结束");
         //console.log(time_end_jest - start_time)
     })
     p_git_clone.on('exit', (code) => {
+        console.log("==== 多线程 clone 结束");
+        
         p_git_clone_state = code
         //let time_end_clone = new Date().getTime()
         //console.log("克隆线程结束");
@@ -156,20 +169,16 @@ let main = function(){
     let time = setInterval(function () {
         
         if (!(p_install_jest_state + p_git_clone_state + write_file_state + timeout_status)) {
+            console.log("==== 各种前置条件都满足 , 准备执行 jest 命令");
             
             // 进入循环之后, 立即将超时标志设为 1 , 是if 中的表达式为 0 ,就不会再次执行这段逻辑了
             timeout_status = 1
     
-            console.log("已经安装 jest , 克隆宿主仓库 , 新建 package.json 完成")
-            console.log("在循环体中运行多线程 , 多进程调用 jest 命令测试")
             run_jest_command()
+            check_jest_output_result()
+
             clearInterval(time)
         }
-        
-       
-       
-       
-       
 
     }, 300)
     /*
