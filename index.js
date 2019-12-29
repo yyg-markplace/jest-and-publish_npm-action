@@ -124,7 +124,7 @@ let run_jest_command = async function(){
         }
 
         //这一个异步执行完毕之后, 就删除这个循环定时器
-        clearInterval(time)
+        //clearInterval(time)
     })
 }
 let main = function(){
@@ -163,6 +163,7 @@ let main = function(){
             console.log("已经安装 jest , 克隆宿主仓库 , 新建 package.json 完成")
             console.log("在循环体中运行多线程 , 多进程调用 jest 命令测试")
             run_jest_command()
+            clearInterval(time)
             /*
             let p_run_jest = childProcess.exec('jest --json --outputFile jest-result.json')
             p_run_jest.on('exit', (code) => {
