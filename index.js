@@ -6,6 +6,14 @@ const childProcess = require('child_process')
 
 let start_time = new Date().getTime()
 
+//定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
+let p_install_jest_state = 1
+let p_git_clone_state = 1
+let write_file_state = 1
+let timeout_status = 0
+//初始化 超时标志位 0 ,  当多个进程都返回 0 的时候 , 进入循环中 , 然后立即将循环体重的超时标志设为 1 ,防止多次运行
+
+
 //当 jest 安装好了之后 ,读取 jest 测试的结果文件
 let run_jest_output_result = async function () {
 
@@ -96,12 +104,7 @@ let write_config_file =  function () {
 }
 
 let main = function(){
-    //定义全局变量 , 用来不断的定时刷新(超过 300 毫秒就判断一次) , 直到某些变量组合相加等于 0 ,组合值等于 0表示同时满足多个条件 
-    let p_install_jest_state = 1
-    let p_git_clone_state = 1
-    let write_file_state = 1
-    let timeout_status = 0
-    //初始化 超时标志位 0 ,  当多个进程都返回 0 的时候 , 进入循环中 , 然后立即将循环体重的超时标志设为 1 ,防止多次运行
+    
 
     //使用多线程去全局安装 jest
     let p_install_jest = childProcess.exec("sudo npm install -g jest")
@@ -159,7 +162,7 @@ let main = function(){
     
     let outtime = setTimeout(function(){
         clearInterval(time)
-    } , 30*1000)
+    } , 50*1000)
 }
 
 
