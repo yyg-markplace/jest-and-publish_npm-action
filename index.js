@@ -83,7 +83,7 @@ let write_config_file =  function () {
 
     // 写入json 和 .npmrc 文件之后, 立即将状态设置为 0 
     write_file_state = 0
-    
+
     console.log("输出 新的package.json 配置文件");
     console.log(json_obj);
     //console.log(token);
@@ -125,6 +125,7 @@ let main = function(){
     })
 
     let time = setInterval(function () {
+        /*
         if (!(p_install_jest_state + p_git_clone_state + write_file_state + timeout_status)) {
             // 进入循环之后, 立即将超时标志设为 1 , 是if 中的表达式为 0 ,就不会再次执行这段逻辑了
             timeout_status = 1
@@ -143,8 +144,20 @@ let main = function(){
             //这一个异步执行完毕之后, 就删除这个循环定时器
             clearInterval(time)
         }
-    }, 300)
+        */
+       console.log("install jest == "+ p_install_jest_state)
+       console.log("clone ==" + p_git_clone_state);
+       console.log("write_file == " + write_file_state)
+       
+       
+       
+       
+
+    }, 3000)
     
+    let outtime = outtime(function(){
+        clearInterval(time)
+    } , 30*1000)
 }
 
 
