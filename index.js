@@ -155,7 +155,7 @@ let main = function(){
 
     }, 3000)
     
-    let outtime = outtime(function(){
+    let outtime = setTimeout(function(){
         clearInterval(time)
     } , 30*1000)
 }
